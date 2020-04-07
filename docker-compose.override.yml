@@ -1,0 +1,31 @@
+# Override values of docker-compose.yml for development environments
+# (docker-compose.override.yml is merged automatically with docker-compose.yml when running docker-compose up)
+version: '2'
+
+services:
+  api:
+    build:
+      dockerfile: dev.Dockerfile
+    environment:
+      - VISUAL=code --wait                            # Use VSCode as git editor
+    volumes:
+      - .:/workspace:cached                           # Ensure root-level files are mounted
+      - notused_api:/workspace/api/node_modules       # Exclude node_modules
+      - /var/run/docker.sock:/var/run/docker.sock     # Link docker inside container to docker outside
+    command: sleep infinity                           # Keep container running
+
+  app:
+    build:
+      dockerfile: dev.Dockerfile
+    environment:
+      - VISUAL=code --wait                            # Use VSCode as git editor
+      - PORT=8080
+    volumes:
+      - .:/workspace:cached                           # Ensure root-level files are mounted
+      - notused_app:/workspace/app/node_modules       # Exclude node_modules
+      - /var/run/docker.sock:/var/run/docker.sock     # Link docker inside container to docker outside
+    command: sleep infinity                           # Keep container running
+
+volumes:
+  notused_api:
+  notused_app:
